@@ -15,41 +15,36 @@ namespace WGI_400A
 {
     public partial class Form1 : Form
     {
+        //is sampling or not
         public bool sampling = false;
 
+        //sample rate (ms)
         public int samplerate = 0;
 
+        //init
         public Form1()
         {
             Form1.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
-            close.Enabled = false;
-            samplestop.Enabled = false;
-            setparameters.Enabled = false;
+
             foreach (String ports in SerialPort.GetPortNames())
             {
                 portc.Items.Add(ports);
             }
         }
 
+        //Connection function
         public void SerialPortConnect(String port, int baudrate, Parity parity, int databits, StopBits stopbits)
         {
             DateTime dateTime = DateTime.Now;
             String dateTimeNow = dateTime.ToShortTimeString();
 
-            serialPort1 = new SerialPort(port,
-                                     baudrate,
-                                     parity,
-                                     databits,
-                                     stopbits);
+            serialPort1 = new SerialPort(port, baudrate, parity, databits, stopbits);
+
             try
             {
                 serialPort1.Open();
-                connect.Enabled = false;
-                close.Enabled = true;
-                setparameters.Enabled = true;
                 logtextbox.AppendText("[" + dateTimeNow + "] " + port + " Connected\n");
-
                 serialPort1.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
             }
             catch (Exception ex)
@@ -58,6 +53,7 @@ namespace WGI_400A
             }
         }
 
+        //Draw Chart
         private void Draw_chart(int get_value)
         {
             Series s = chart1.Series["Value"];
@@ -84,6 +80,7 @@ namespace WGI_400A
             chart1.ChartAreas[0].AxisX.Maximum = min + 100;
         }
 
+        //DataReceivedHandler
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             DateTime dateTime = DateTime.Now;
@@ -98,6 +95,7 @@ namespace WGI_400A
             receivetextbox.AppendText(indata + "\n");
         }
 
+        //Sampling
         private void Portsampling()
         {
             try
@@ -114,6 +112,8 @@ namespace WGI_400A
             }
         }
 
+        #region button_area
+
         private void Connect_Click(object sender, EventArgs e)
         {
             if (Port.Text != "null")
@@ -125,8 +125,36 @@ namespace WGI_400A
                 StopBits stopbits = (StopBits)Enum.Parse(typeof(StopBits), stopbitsc.Text);
 
                 SerialPortConnect(port, baudrate, parity, databits, stopbits);
+
+                if (serialPort1.IsOpen)
+                {
+                    connect.Enabled = false;                   
+                }
             }
         }
+
+        private void Close_Click(object sender, EventArgs e)
+                {
+                    DateTime dateTime = DateTime.Now;
+                    String dateTimeNow = dateTime.ToShortTimeString();
+
+                    try
+                    {
+                        if (serialPort1.IsOpen)
+                        {
+                            serialPort1.DataReceived -= new SerialDataReceivedEventHandler(DataReceivedHandler);
+                            serialPort1.Close();
+                    
+                            connect.Enabled = true;
+                    
+                            logtextbox.AppendText("[" + dateTimeNow + "]" + " Disconnected\n");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
 
         private void Setparameters_Click(object sender, EventArgs e)
         {
@@ -200,7 +228,6 @@ namespace WGI_400A
 
                     String commandData = "SRS" + bdrate + "," + receivedeli + "," + senddeli + "," + databt + "," + paritybt + "," + stopbt + "\r\n";
 
-                    // "\r\n"為Windows換行
                     logtextbox.AppendText("[" + dateTimeNow + "]" + " Sent: " + commandData + "\n");
                     serialPort1.Write(commandData + "\r\n");
                 }
@@ -209,90 +236,7 @@ namespace WGI_400A
             {
                 MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void Close_Click(object sender, EventArgs e)
-        {
-            DateTime dateTime = DateTime.Now;
-            String dateTimeNow = dateTime.ToShortTimeString();
-
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    serialPort1.DataReceived -= new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-                    serialPort1.Close();
-                    close.Enabled = false;
-                    connect.Enabled = true;
-                    setparameters.Enabled = false;
-                    logtextbox.AppendText("[" + dateTimeNow + "]" + " Disconnected\n");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void Send_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    DateTime dateTime = DateTime.Now;
-                    String dateTimeNow = dateTime.ToShortTimeString();
-                    String commandData = sendtextbox.Text;
-
-                    // "\r\n"為Windows換行
-                    logtextbox.AppendText("[" + dateTimeNow + "]" + " Sent: " + commandData + "\n");
-                    serialPort1.Write(commandData + "\r\n");
-                    sendtextbox.Clear();                   
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void Samplestart_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    sampling = true;
-                    samplestart.Enabled = false;
-                    samplestop.Enabled = true;
-                    samplerate = Convert.ToInt32(sampleratetextbox.Text);
-                    Thread comThread = new Thread(Portsampling);
-                    comThread.Start();               
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void Samplestop_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    sampling = false;
-                    samplestart.Enabled = true;
-                    samplestop.Enabled = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+        }    
 
         private void Reset_Click(object sender, EventArgs e)
         {
@@ -426,9 +370,88 @@ namespace WGI_400A
             }
         }
 
+        private void Send_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {
+                    DateTime dateTime = DateTime.Now;
+                    String dateTimeNow = dateTime.ToShortTimeString();
+                    String commandData = sendtextbox.Text;
+
+                    //"\r\n"為Windows換行
+                    logtextbox.AppendText("[" + dateTimeNow + "]" + " Sent: " + commandData + "\n");
+                    serialPort1.Write(commandData + "\r\n");
+                    sendtextbox.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Samplestart_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {
+                    sampling = true;
+                    samplestart.Enabled = false;
+                    samplerate = Convert.ToInt32(sampleratetextbox.Text);
+                    Thread comThread = new Thread(Portsampling);
+                    comThread.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Samplestop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {
+                    sampling = false;
+                    samplestart.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ButtonMinimumSetting_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ButtonMaximumSetting_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ButtonMachineStatusStart_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ButtonMachineStatusClose_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void Savelog_Click(object sender, EventArgs e)
         {
 
         }
+
+        #endregion
     }
 }
