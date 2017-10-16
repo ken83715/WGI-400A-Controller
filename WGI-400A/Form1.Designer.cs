@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.receivetextbox = new System.Windows.Forms.TextBox();
             this.sendtextbox = new System.Windows.Forms.TextBox();
             this.Port = new System.Windows.Forms.Label();
@@ -83,6 +83,8 @@
             this.Command = new System.Windows.Forms.Label();
             this.SendandReceive = new System.Windows.Forms.GroupBox();
             this.sample = new System.Windows.Forms.GroupBox();
+            this.plimit = new System.Windows.Forms.TextBox();
+            this.setlimit = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.MachineStatus.SuspendLayout();
             this.Connection.SuspendLayout();
@@ -92,15 +94,15 @@
             // 
             // receivetextbox
             // 
-            this.receivetextbox.Location = new System.Drawing.Point(9, 176);
+            this.receivetextbox.Location = new System.Drawing.Point(6, 182);
             this.receivetextbox.Multiline = true;
             this.receivetextbox.Name = "receivetextbox";
-            this.receivetextbox.Size = new System.Drawing.Size(423, 169);
+            this.receivetextbox.Size = new System.Drawing.Size(423, 127);
             this.receivetextbox.TabIndex = 0;
             // 
             // sendtextbox
             // 
-            this.sendtextbox.Location = new System.Drawing.Point(9, 39);
+            this.sendtextbox.Location = new System.Drawing.Point(6, 39);
             this.sendtextbox.Multiline = true;
             this.sendtextbox.Name = "sendtextbox";
             this.sendtextbox.Size = new System.Drawing.Size(423, 82);
@@ -236,7 +238,7 @@
             // 
             // send
             // 
-            this.send.Location = new System.Drawing.Point(307, 127);
+            this.send.Location = new System.Drawing.Point(304, 127);
             this.send.Name = "send";
             this.send.Size = new System.Drawing.Size(125, 30);
             this.send.TabIndex = 14;
@@ -247,7 +249,7 @@
             // Receive
             // 
             this.Receive.AutoSize = true;
-            this.Receive.Location = new System.Drawing.Point(6, 158);
+            this.Receive.Location = new System.Drawing.Point(3, 164);
             this.Receive.Name = "Receive";
             this.Receive.Size = new System.Drawing.Size(55, 15);
             this.Receive.TabIndex = 15;
@@ -397,17 +399,17 @@
             // 
             // chart1
             // 
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(680, 293);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "Value";
-            this.chart1.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Value";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(497, 267);
             this.chart1.TabIndex = 31;
             this.chart1.Text = "chart1";
@@ -427,7 +429,7 @@
             this.MachineStatus.Controls.Add(this.buttonMachineStatusStart);
             this.MachineStatus.Controls.Add(this.okLightShown);
             this.MachineStatus.Controls.Add(this.lowLightShown);
-            this.MachineStatus.Location = new System.Drawing.Point(458, 189);
+            this.MachineStatus.Location = new System.Drawing.Point(458, 128);
             this.MachineStatus.Name = "MachineStatus";
             this.MachineStatus.Size = new System.Drawing.Size(213, 371);
             this.MachineStatus.TabIndex = 46;
@@ -612,9 +614,9 @@
             this.SendandReceive.Controls.Add(this.send);
             this.SendandReceive.Controls.Add(this.Receive);
             this.SendandReceive.Controls.Add(this.receivetextbox);
-            this.SendandReceive.Location = new System.Drawing.Point(12, 209);
+            this.SendandReceive.Location = new System.Drawing.Point(12, 245);
             this.SendandReceive.Name = "SendandReceive";
-            this.SendandReceive.Size = new System.Drawing.Size(440, 351);
+            this.SendandReceive.Size = new System.Drawing.Size(440, 315);
             this.SendandReceive.TabIndex = 49;
             this.SendandReceive.TabStop = false;
             this.SendandReceive.Text = "Send and Receive";
@@ -632,11 +634,32 @@
             this.sample.TabStop = false;
             this.sample.Text = "Sampling";
             // 
+            // plimit
+            // 
+            this.plimit.Location = new System.Drawing.Point(16, 209);
+            this.plimit.Multiline = true;
+            this.plimit.Name = "plimit";
+            this.plimit.Size = new System.Drawing.Size(140, 30);
+            this.plimit.TabIndex = 51;
+            this.plimit.Text = "1000";
+            // 
+            // setlimit
+            // 
+            this.setlimit.Location = new System.Drawing.Point(162, 209);
+            this.setlimit.Name = "setlimit";
+            this.setlimit.Size = new System.Drawing.Size(140, 30);
+            this.setlimit.TabIndex = 52;
+            this.setlimit.Text = "Set Limit Pressure";
+            this.setlimit.UseVisualStyleBackColor = true;
+            this.setlimit.Click += new System.EventHandler(this.Setlimit_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1188, 572);
+            this.Controls.Add(this.setlimit);
+            this.Controls.Add(this.plimit);
             this.Controls.Add(this.sample);
             this.Controls.Add(this.SendandReceive);
             this.Controls.Add(this.Connection);
@@ -715,6 +738,8 @@
         private System.Windows.Forms.Label Command;
         private System.Windows.Forms.GroupBox SendandReceive;
         private System.Windows.Forms.GroupBox sample;
+        private System.Windows.Forms.TextBox plimit;
+        private System.Windows.Forms.Button setlimit;
     }
 }
 
