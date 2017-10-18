@@ -14,6 +14,7 @@ namespace WGI_400A
         //Status 0: Common
         //Status 1: Sampling
         //Status 2: Sampling with Light
+        //Status 3: Calibrate
         public int Status;
 
         //is sampling or not
@@ -38,6 +39,9 @@ namespace WGI_400A
         //pressure limit
         public int MachineSafePressure;
 
+        //calibrate offset
+        public int CalibOffset;
+
         //message
         public string Message = "Message";
 
@@ -59,6 +63,8 @@ namespace WGI_400A
             ChartMax = 100;
 
             MachineSafePressure = 1000;
+
+            CalibOffset = 0;
 
             buttonMachineStatusStart.Enabled = false;
 
@@ -92,9 +98,6 @@ namespace WGI_400A
         //Draw Chart
         private void Draw_chart(int getValue)
         {
-            //if (getValue > ChartMax)
-                //ChartMax = getValue;
-
             Series s = chart1.Series["Value"];
             //Determine the next X value
             double nextX = 1;
@@ -154,21 +157,21 @@ namespace WGI_400A
             {
                 if (pre > Hbound)
                 {
-                    highLightShown.ForeColor = Color.Green;
-                    okLightShown.ForeColor = Color.Red;
-                    lowLightShown.ForeColor = Color.Red;
+                    highLightShown.ForeColor = Color.Red;
+                    okLightShown.ForeColor = Color.Black;
+                    lowLightShown.ForeColor = Color.Black;
                 }
                 else if (pre < Lbound)
                 {
-                    highLightShown.ForeColor = Color.Red;
-                    okLightShown.ForeColor = Color.Red;
-                    lowLightShown.ForeColor = Color.Green;
+                    highLightShown.ForeColor = Color.Black;
+                    okLightShown.ForeColor = Color.Black;
+                    lowLightShown.ForeColor = Color.Red;
                 }
                 else
                 {
-                    highLightShown.ForeColor = Color.Red;
+                    highLightShown.ForeColor = Color.Black;
                     okLightShown.ForeColor = Color.Green;
-                    lowLightShown.ForeColor = Color.Red;
+                    lowLightShown.ForeColor = Color.Black;
                 }               
             }
         }
@@ -202,7 +205,9 @@ namespace WGI_400A
                     receivetextbox.AppendText(indata + "\n");
 
                     string pressure = indata.Substring(3, 5);
-                    Draw_chart(Convert.ToInt32(pressure));
+                    int pressureint = Convert.ToInt32(pressure) + CalibOffset;
+                    textMachinePressure.AppendText(pressureint.ToString() + "\n");
+                    Draw_chart(pressureint);
 
                     //pressure exceed the limit
                     string errormessage = "Pressure Exceed the Limit !";
@@ -227,11 +232,13 @@ namespace WGI_400A
                     receivetextbox.AppendText(indata + "\n");
 
                     string pressure = indata.Substring(3, 5);
-                    SetLight(Convert.ToInt32(pressure));
-                    textMachinePressure.AppendText(pressure + "\n");
-                    Draw_chart(Convert.ToInt32(pressure));
+                    int pressureint = Convert.ToInt32(pressure) + CalibOffset;
+                    SetLight(pressureint);
+                    textMachinePressure.AppendText(pressureint.ToString() + "\n");
+                    Draw_chart(pressureint);
 
                     //pressure exceed the limit
+                    //no offset use on limit
                     string errormessage = "Pressure Exceed the Limit !";
                     if (Convert.ToInt32(pressure) > MachineSafePressure)
                     {
@@ -240,7 +247,7 @@ namespace WGI_400A
                 }
 
                 logtextbox.AppendText("[" + dateTimeNow + "]" + " Received: " + indata + "\n");
-            }
+            }            
         }
         
         #region button_area
@@ -480,6 +487,7 @@ namespace WGI_400A
                     string commandData = "MOD00";
 
                     Status = 1;
+                    calib.Enabled = false;
 
                     serialPort1.Write(commandData + "\r\n");
 
@@ -507,6 +515,30 @@ namespace WGI_400A
                     logtextbox.AppendText("[" + dateTimeNow + "]" + " Sent:" + commandData + "\n");
 
                     Status = 0;
+                    calib.Enabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Calib_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {                    
+                    DateTime dateTime = DateTime.Now;
+                    string dateTimeNow = dateTime.ToShortTimeString();
+
+                    string calibnum = calibnumber.Text;
+                    int num = Convert.ToInt32(calibnum);
+
+                    CalibOffset = num;
+
+                    logtextbox.AppendText("[" + dateTimeNow + "]" + " Calibrate" + "\n");
                 }
             }
             catch (Exception ex)
@@ -568,9 +600,11 @@ namespace WGI_400A
                     string dateTimeNow = dateTime.ToShortTimeString();
                     Sampling = true;
                     samplestart.Enabled = false;
+                    calib.Enabled = false;
+
                     Samplerate = Convert.ToInt32(sampleratetextbox.Text);
 
-                    Status = 1;
+                    Status = 1;                   
 
                     Thread comThread = new Thread(Portsampling);
                     comThread.Start();
@@ -594,8 +628,10 @@ namespace WGI_400A
                     string dateTimeNow = dateTime.ToShortTimeString();
                     Sampling = false;
                     samplestart.Enabled = true;
+                    calib.Enabled = true;
+                    textMachinePressure.Clear();
 
-                    Status = 0;
+                    Status = 0;                   
 
                     logtextbox.AppendText("[" + dateTimeNow + "]" + " Stop Sampling\n");
                 }
@@ -662,8 +698,9 @@ namespace WGI_400A
                     buttonMaximumSetting.Enabled = false;
                     
                     buttonMachineStatusStart.Enabled = false;
+                    calib.Enabled = false;
 
-                    Status = 2;
+                    Status = 2;                   
 
                     Sampling = true;
                     Thread machineStatusThread = new Thread(Portsampling);
@@ -689,13 +726,14 @@ namespace WGI_400A
 
                     Sampling = false;
                     buttonMachineStatusStart.Enabled = true;
+                    calib.Enabled = true;
                     textMachinePressure.Clear();
 
                     highLightShown.ForeColor = Color.Black;
                     okLightShown.ForeColor = Color.Black;
                     lowLightShown.ForeColor = Color.Black;
 
-                    Status = 0;                    
+                    Status = 0;
                 }
             }
             catch (Exception ex)
@@ -717,5 +755,6 @@ namespace WGI_400A
 
         #endregion
 
+        
     }
 }

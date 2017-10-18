@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.receivetextbox = new System.Windows.Forms.TextBox();
             this.sendtextbox = new System.Windows.Forms.TextBox();
             this.Port = new System.Windows.Forms.Label();
@@ -80,11 +80,13 @@
             this.okLightShown = new System.Windows.Forms.Label();
             this.lowLightShown = new System.Windows.Forms.Label();
             this.Connection = new System.Windows.Forms.GroupBox();
+            this.calib = new System.Windows.Forms.Button();
             this.Command = new System.Windows.Forms.Label();
             this.SendandReceive = new System.Windows.Forms.GroupBox();
             this.sample = new System.Windows.Forms.GroupBox();
             this.plimit = new System.Windows.Forms.TextBox();
             this.setlimit = new System.Windows.Forms.Button();
+            this.calibnumber = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.MachineStatus.SuspendLayout();
             this.Connection.SuspendLayout();
@@ -97,7 +99,7 @@
             this.receivetextbox.Location = new System.Drawing.Point(6, 182);
             this.receivetextbox.Multiline = true;
             this.receivetextbox.Name = "receivetextbox";
-            this.receivetextbox.Size = new System.Drawing.Size(423, 127);
+            this.receivetextbox.Size = new System.Drawing.Size(423, 106);
             this.receivetextbox.TabIndex = 0;
             // 
             // sendtextbox
@@ -399,17 +401,17 @@
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(680, 293);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Value";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Value";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(497, 267);
             this.chart1.TabIndex = 31;
             this.chart1.Text = "chart1";
@@ -537,7 +539,7 @@
             this.textMaximumSetting.Name = "textMaximumSetting";
             this.textMaximumSetting.Size = new System.Drawing.Size(100, 30);
             this.textMaximumSetting.TabIndex = 31;
-            this.textMaximumSetting.Text = "0";
+            this.textMaximumSetting.Text = "50";
             // 
             // buttonMachineStatusStart
             // 
@@ -593,10 +595,20 @@
             this.Connection.Controls.Add(this.close);
             this.Connection.Location = new System.Drawing.Point(12, 12);
             this.Connection.Name = "Connection";
-            this.Connection.Size = new System.Drawing.Size(440, 191);
+            this.Connection.Size = new System.Drawing.Size(440, 175);
             this.Connection.TabIndex = 47;
             this.Connection.TabStop = false;
             this.Connection.Text = "Connection";
+            // 
+            // calib
+            // 
+            this.calib.Location = new System.Drawing.Point(162, 193);
+            this.calib.Name = "calib";
+            this.calib.Size = new System.Drawing.Size(140, 30);
+            this.calib.TabIndex = 30;
+            this.calib.Text = "Calibrate 0";
+            this.calib.UseVisualStyleBackColor = true;
+            this.calib.Click += new System.EventHandler(this.Calib_Click);
             // 
             // Command
             // 
@@ -614,9 +626,9 @@
             this.SendandReceive.Controls.Add(this.send);
             this.SendandReceive.Controls.Add(this.Receive);
             this.SendandReceive.Controls.Add(this.receivetextbox);
-            this.SendandReceive.Location = new System.Drawing.Point(12, 245);
+            this.SendandReceive.Location = new System.Drawing.Point(12, 266);
             this.SendandReceive.Name = "SendandReceive";
-            this.SendandReceive.Size = new System.Drawing.Size(440, 315);
+            this.SendandReceive.Size = new System.Drawing.Size(440, 294);
             this.SendandReceive.TabIndex = 49;
             this.SendandReceive.TabStop = false;
             this.SendandReceive.Text = "Send and Receive";
@@ -636,7 +648,7 @@
             // 
             // plimit
             // 
-            this.plimit.Location = new System.Drawing.Point(16, 209);
+            this.plimit.Location = new System.Drawing.Point(16, 230);
             this.plimit.Multiline = true;
             this.plimit.Name = "plimit";
             this.plimit.Size = new System.Drawing.Size(140, 30);
@@ -645,7 +657,7 @@
             // 
             // setlimit
             // 
-            this.setlimit.Location = new System.Drawing.Point(162, 209);
+            this.setlimit.Location = new System.Drawing.Point(162, 230);
             this.setlimit.Name = "setlimit";
             this.setlimit.Size = new System.Drawing.Size(140, 30);
             this.setlimit.TabIndex = 52;
@@ -653,11 +665,22 @@
             this.setlimit.UseVisualStyleBackColor = true;
             this.setlimit.Click += new System.EventHandler(this.Setlimit_Click);
             // 
+            // calibnumber
+            // 
+            this.calibnumber.Location = new System.Drawing.Point(16, 194);
+            this.calibnumber.Multiline = true;
+            this.calibnumber.Name = "calibnumber";
+            this.calibnumber.Size = new System.Drawing.Size(140, 30);
+            this.calibnumber.TabIndex = 53;
+            this.calibnumber.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1188, 572);
+            this.Controls.Add(this.calibnumber);
+            this.Controls.Add(this.calib);
             this.Controls.Add(this.setlimit);
             this.Controls.Add(this.plimit);
             this.Controls.Add(this.sample);
@@ -740,6 +763,8 @@
         private System.Windows.Forms.GroupBox sample;
         private System.Windows.Forms.TextBox plimit;
         private System.Windows.Forms.Button setlimit;
+        private System.Windows.Forms.Button calib;
+        private System.Windows.Forms.TextBox calibnumber;
     }
 }
 
